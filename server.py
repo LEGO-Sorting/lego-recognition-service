@@ -63,11 +63,13 @@ def predict_brick():
     img_content_type = file.content_type
 
     # TODO use model. Assumption for now category=img_name
-    img_np_array = np.fromstring(img_data, np.uint8)
-    img_np_array = cv2.imdecode(img_np_array, cv2.IMREAD_COLOR)
+    
+    if isinstance(img_data, bytes):
+        img_np_array = np.fromstring(img_data, np.uint8)
+        img_np_array = cv2.imdecode(img_np_array, cv2.IMREAD_COLOR)
 
-    # older version of creating img_np_array
-    # img_np_array = np.array(img_data)
+    else:
+        img_np_array = np.array(img_data)
 
     img_category = evaluate(model, img_np_array)
 

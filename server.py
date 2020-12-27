@@ -1,4 +1,5 @@
 import base64
+import cv2
 from random import random
 from threading import Thread, Event
 
@@ -62,7 +63,12 @@ def predict_brick():
     img_content_type = file.content_type
 
     # TODO use model. Assumption for now category=img_name
-    img_np_array = np.array(img_data)
+    img_np_array = np.fromstring(img_data, np.uint8)
+    img_np_array = cv2.imdecode(img_np_array, cv2.IMREAD_COLOR)
+
+    # older version of creating img_np_array
+    # img_np_array = np.array(img_data)
+
     img_category = evaluate(model, img_np_array)
 
     new_picture_command = NewPicture(img_category, img_data_encoded, img_content_type)

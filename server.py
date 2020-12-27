@@ -1,4 +1,5 @@
 import base64
+import cv2
 from random import random
 from threading import Thread, Event
 
@@ -19,7 +20,7 @@ socketio = SocketIO(app)
 thread = Thread()
 thread_stop_event = Event()
 
-model = load_model('04 Dec 2020 11 08 40.model', 'ohe.pickle')
+model = load_model('27 Dec 2020 14 01 27.epoch109.model', 'ohe.pickle')
 
 
 def randomNumberGenerator():
@@ -62,7 +63,13 @@ def predict_brick():
     img_content_type = file.content_type
 
     # TODO use model. Assumption for now category=img_name
-    img_np_array = np.array(img_data)
+    
+    if isinstance(img_data, bytes):
+        img_np_array = np.frombuffer(img_data, np.uint8)
+        img_np_array = cv2.imdecode(img_np_array, cv2.IMREAD_COLOR)
+    else:
+        img_np_array = np.array(img_data)
+
     img_category = evaluate(model, img_np_array)
 
     new_picture_command = NewPicture(img_category, img_data_encoded, img_content_type)

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>LEGO Client</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+    <div class="container" id="content">
+      <div class="row">
+        <p>Asynchronous page updates will appear here:</p>
+        <h3>Number list:</h3>
+        <div id="log"></div> <!-- /#log -->
+      </div>
+    </div>
+
+    {% endblock %}
+  </body>
+</html>

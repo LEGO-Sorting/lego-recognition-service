@@ -1,0 +1,15 @@
+.prediction_container {
+    display: flex;
+    flex-direction: row;
+}
+
+.prediction_column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 12px;
+}
+
+img {
+    height: 250px;
+}

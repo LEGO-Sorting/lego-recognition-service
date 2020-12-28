@@ -10,6 +10,8 @@ from dto.NewPicture import NewPicture
 from flask_cors import CORS, cross_origin
 from lego_classifier_model import load_model, evaluate
 import numpy as np
+import os
+from tensorflow.keras import models
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -20,7 +22,9 @@ socketio = SocketIO(app)
 thread = Thread()
 thread_stop_event = Event()
 
-model = load_model('27 Dec 2020 14 01 27.epoch109.model', 'ohe.pickle')
+print(os.listdir(os.path.dirname(os.path.abspath(__file__))))
+dir = os.path.dirname(os.path.abspath(__file__))
+loaded_model = load_model(dir + '\my_model.h5', dir + '\ohe.pickle')
 
 
 def randomNumberGenerator():
@@ -61,8 +65,6 @@ def predict_brick():
     img_data = file.stream.read()
     img_data_encoded = base64.b64encode(img_data)
     img_content_type = file.content_type
-
-    # TODO use model. Assumption for now category=img_name
     
     if isinstance(img_data, bytes):
         img_np_array = np.frombuffer(img_data, np.uint8)
@@ -70,9 +72,9 @@ def predict_brick():
     else:
         img_np_array = np.array(img_data)
 
-    img_category = evaluate(model, img_np_array)
+    img_category = evaluate(loaded_model, img_np_array)
 
-    new_picture_command = NewPicture(img_category, img_data_encoded, img_content_type)
+    new_picture_command = NewPicture(str(img_category), img_data_encoded, img_content_type)
     handle_picture_received(new_picture_command)
 
     return jsonify({'msg': 'success'})
@@ -89,7 +91,6 @@ def handle_picture_received(body):
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    # TODO use load_model() to run thread with model
     print('Client connected')
 
 

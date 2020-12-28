@@ -154,4 +154,5 @@ Dataset
 logs/
 test_data/
 *.model
+*.h5
 ohe.pickle

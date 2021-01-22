@@ -1,4 +1,5 @@
 from __future__ import print_function
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.engine.training import Model
 from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras import models
@@ -30,7 +31,15 @@ Two first parameters {input_.shape[0:2]} where resized to fit a model \
 so the problem is with the others{' ' + input_.shape[2:] if len(input_.shape[2:]) != 0 else ''}.", file=sys.stderr)
         exit(-1)
 
-    input_ = input_.reshape((-1, *model.input_shape[1:])) / 255.0
+    input_ = input_.reshape((-1, *model.input_shape[1:]))
+    
+    keras_image_generator = ImageDataGenerator(
+        rescale=1. / 255,
+        samplewise_std_normalization=True,
+        samplewise_center=True
+    ).flow(input_, batch_size=len(input_), shuffle=False)
+    input_ = keras_image_generator.next()
+
     prediction = model.predict(input_)
     prediction = ohe.inverse_transform(prediction)
     return prediction[0][0]
